@@ -41,7 +41,7 @@ namespace Chsword.Excel2Object
                 var row = (IRow) rows.Current;
                 ICell firstCell = row.GetCell(0);
                 if (firstCell == null || firstCell.CellType == CellType.Blank ||
-                    string.IsNullOrWhiteSpace(firstCell.ToString()))
+                    string.IsNullOrEmpty(firstCell.ToString()))
                     continue;
 
                 var model = new TModel();
@@ -118,7 +118,7 @@ namespace Chsword.Excel2Object
         }
          IEnumerator GetDataRows(string path)
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrEmpty(path))
                 return null;
             HSSFWorkbook hssfworkbook;
             try
