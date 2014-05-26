@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +15,13 @@ namespace Chsword.Excel2Object
             var workbook = new HSSFWorkbook();
             var sheet = workbook.CreateSheet();
             var attrDict = ExcelUtil.GetExportAttrDict<TModel>();
-            var attrArray = attrDict.OrderBy(c => c.Value.Order).ToArray();
-            for (int i = 0; i < attrArray.Length; i++)
+            int aNum = 0;
+            foreach (var item in attrDict)
+            {
+                attrArray[aNum] = item;
+                aNum++;
+
+            } for (int i = 0; i < attrArray.Length; i++)
             {
                 sheet.SetColumnWidth(i, 50 * 256);
             }
