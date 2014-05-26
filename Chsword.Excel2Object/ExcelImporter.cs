@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Chsword.Excel2Object.Internal;
 using NPOI.HSSF.UserModel;
@@ -23,7 +22,15 @@ namespace Chsword.Excel2Object
             var titleRow = (IRow) rows.Current;
             foreach (var cell in titleRow.Cells)
             {
-                var prop = dict.FirstOrDefault(c => cell.StringCellValue == c.Value.Title);
+               var prop = new KeyValuePair<PropertyInfo, ExcelAttribute>();
+                foreach (var item in dict)
+                {
+                    if (cell.StringCellValue == item.Value.Title)
+                    {
+                        prop = item;
+                    }
+                }
+
                 if (prop.Key != null && !dictColumns.ContainsKey(cell.ColumnIndex))
                 {
                     dictColumns.Add(cell.ColumnIndex, prop);
@@ -49,9 +56,17 @@ namespace Chsword.Excel2Object
                     }
                     else
                     {
-                        var val = Convert.ChangeType(GetCellValue(row, pair.Key), propType);
-                        pair.Value.Key.SetValue(model, val, null);
-                    }
+                        try
+                        {
+                            var val = Convert.ChangeType(GetCellValue(row, pair.Key), propType);
+                            pair.Value.Key.SetValue(model, val, null);
+                        }
+                        catch 
+                        {
+                            break;
+                            
+                        }
+                     }
                 }
                 yield return model;
             }
