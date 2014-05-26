@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
 
 namespace Chsword.Excel2Object.Internal
@@ -12,16 +10,21 @@ namespace Chsword.Excel2Object.Internal
             var dict = new Dictionary<PropertyInfo, ExcelAttribute>();
             foreach (var propertyInfo in typeof(T).GetProperties())
             {
-                var attr = propertyInfo.GetCustomAttributes(true).FirstOrDefault(c => c is ExcelAttribute || c is DisplayAttribute);
+                var attr = new object();
+                var ppi = propertyInfo.GetCustomAttributes(true);
+                for (int i = 0; i < ppi.Length; i++)
+                {
+                    if (ppi[i] is ExcelAttribute)
+                    {
+                        attr = ppi[i];
+                        break;
+                    }
+                }
+
                 if (attr != null)
                 {
-                    var attr1 = attr;
-                    if (attr is DisplayAttribute)
-                    {
-                        var display = attr as DisplayAttribute;
-                        attr1 = new ExcelAttribute(display.Name) { Order = display.Order };
-                    }
-                    dict.Add(propertyInfo, attr1 as ExcelAttribute);
+
+                    dict.Add(propertyInfo, attr as ExcelAttribute);
 
                 }
             }
